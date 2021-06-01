@@ -206,7 +206,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'@param vcfMetaData
 #'meta data of 1000 Genomes project (phase3) including 'sample',	'pop',	'super_pop', and 'gender' header
 #'@param vcfsubset
-#'vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).
+#'vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).
 #'@return You can find the results in R object under title of 'RESULTsGenomicFeatures' and 'RESULTsChromatinState'.
 #'@examples
 #'data(BackendData_GenomicFeatures)
@@ -1074,9 +1074,10 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
 
   posQuerySNP <- GRanges(paste0(gsub('chr','',as.character(SNP_chr_POS$seqnames)),':',as.character(SNP_chr_POS$start),'-',as.character(SNP_chr_POS$end))) + windowSize
   #Using the 1MB window that we defined for the index variant, we capture the relevant variants from the VCF file for our LD calculations.
-
+   
   if(!is.null(vcfPATH))
-  {
+  { 
+    suppressWarnings({
     #---- vcf is the address of the vcf file
     chr.remote.vcf <- vcfPATH
     vcfsubset = NULL
@@ -1084,6 +1085,7 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
     my.samples = fread(vcfMetaData, stringsAsFactors = FALSE)
     vcfsubset <- SetPopulation(vcf = vcfsubset, sample_sheet = my.samples)
     row.names(vcfsubset) = make.names(row.names(vcfsubset), unique = TRUE)
+    })
   }
 
   LD <- CalcLD(vcf = vcfsubset, index = indexSNP, population = "EUR")
@@ -1211,4 +1213,3 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   print(system.file(package="FEVV"))
 
 }
-                         
