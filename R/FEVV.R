@@ -4,8 +4,8 @@
 #############################################################################################
 
 #'@export
-#'@import data.table
 #'@import GenomicRanges
+#'@import data.table
 #'@export
 #'@name eSNPsEnrichmentAnalysis
 #'@title Functional Enrichment of eQTL SNPs
@@ -184,8 +184,8 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'@import BSgenome.Hsapiens.UCSC.hg38
 #'@import motifbreakR
 #'@import snpStats
-#'@import data.table
 #'@import GenomicRanges
+#'@import data.table
 #'@import biomaRt
 #'@import GenomicRanges
 #'@import VariantAnnotation
@@ -212,7 +212,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'data(BackendData_GenomicFeatures)
 #'data(BackendData_ChromatinStates)
 #'Destiny_Folder <- system.file(package = "FEVV")
-#'querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = 'http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/ALL.chr4.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf.gz' )
+#'querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = 'http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz' )
 #'@export
 
 querySNPsEnrichmentAnalysis <- NULL
