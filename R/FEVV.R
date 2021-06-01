@@ -296,7 +296,6 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
       if (return == "valid") {
         if (any(!vcf.snv)) {
           vcf <- vcf[vcf.snv, ]
-          warning("CalcLD only operates on SNVs some of your variants were dropped at this step, set return = 'all', to override this behaviour")
         }
         vcf <- vcf[isSNV(vcf, singleAltOnly = TRUE), ]
       }
@@ -312,7 +311,6 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
         if (return == "valid") {
           if (any(!vcf.snv)) {
             vcf <- vcf[vcf.snv, ]
-            warning("CalcLD only operates on SNVs some of your variants were dropped at this step, set return = 'all', to override this behaviour")
           }
           vcf <- vcf[isSNV(vcf, singleAltOnly = TRUE), ]
         }
@@ -618,7 +616,6 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
       } else {
         stop("variants must be either a GRanges or VCF object, your object is: ", class(variants))
       }
-      warning("No overlaps were found for this variant/feature combination")
     }
     return(variants)
   }
@@ -1005,7 +1002,6 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
 
     if(missing(clump_r2))
     {
-      message("Warning: since v0.4.2 the default r2 value for clumping has changed from 0.01 to 0.001")
     }
     if(!is.data.frame(dat))
     {
@@ -1077,7 +1073,7 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
    
   if(!is.null(vcfPATH))
   { 
-    suppressWarnings({
+     
     #---- vcf is the address of the vcf file
     chr.remote.vcf <- vcfPATH
     vcfsubset = NULL
@@ -1085,7 +1081,7 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
     my.samples = fread(vcfMetaData, stringsAsFactors = FALSE)
     vcfsubset <- SetPopulation(vcf = vcfsubset, sample_sheet = my.samples)
     row.names(vcfsubset) = make.names(row.names(vcfsubset), unique = TRUE)
-    })
+     
   }
 
   LD <- CalcLD(vcf = vcfsubset, index = indexSNP, population = "EUR")
@@ -1213,3 +1209,4 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   print(system.file(package="FEVV"))
 
 }
+
