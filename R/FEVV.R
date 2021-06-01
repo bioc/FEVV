@@ -212,7 +212,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'data(BackendData_GenomicFeatures)
 #'data(BackendData_ChromatinStates)
 #'Destiny_Folder <- system.file(package = "FEVV")
-#'querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcf = vcfsubset, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = NULL )
+#'querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = 'http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/ALL.chr4.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf.gz' )
 #'@export
 
 querySNPsEnrichmentAnalysis <- NULL
@@ -1078,9 +1078,9 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   if(!is.null(vcfPATH))
   {
     #---- vcf is the address of the vcf file
-    chr.remote.vcf <- vcf
+    chr.remote.vcf <- vcfPATH
     vcfsubset = NULL
-    vcfsubset <- GetVariantsInWindow(file = chr.remote.vcf,position = posQuerySNP[1], genome = "hg38", type = "vcf")
+    vcfsubset <- GetVariantsInWindow(file = chr.remote.vcf,position = posQuerySNP[1], type = "vcf")
     my.samples = fread(vcfMetaData, stringsAsFactors = FALSE)
     vcfsubset <- SetPopulation(vcf = vcfsubset, sample_sheet = my.samples)
     row.names(vcfsubset) = make.names(row.names(vcfsubset), unique = TRUE)
