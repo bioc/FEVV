@@ -1211,4 +1211,4 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   print(system.file(package="FEVV"))
 
 }
-
+                         
