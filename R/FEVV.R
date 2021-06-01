@@ -206,7 +206,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'@param vcfMetaData
 #'meta data of 1000 Genomes project (phase3) including 'sample',	'pop',	'super_pop', and 'gender' header
 #'@param vcfsubset
-#'vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).
+#'vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).
 #'@return You can find the results in R object under title of 'RESULTsGenomicFeatures' and 'RESULTsChromatinState'.
 #'@examples
 #'data(BackendData_GenomicFeatures)
