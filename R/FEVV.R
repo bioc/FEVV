@@ -49,31 +49,31 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
   }
 
   #--------------------------- inputs
-  states_bed = BackendData_ChromatinStates
+  states_bed <- BackendData_ChromatinStates
 
-  chromatin_states = GRanges(sample = states_bed[[4]],
+  chromatin_states <- GRanges(sample = states_bed[[4]],
                              seqnames = gsub('chr','',states_bed[[1]]),
                              ranges = IRanges(states_bed[[2]], states_bed[[3]]),
                              state = states_bed[[4]])
 
-  genomic_regions = BackendData_GenomicFeatures
-  genomic_regions$seqnames = gsub('chr','',genomic_regions$seqnames)
-  genomic_regions = genomic_regions[which(genomic_regions$seqnames %in% c(1:22, 'X')),]
-  genomic_regions = GRanges(sample = genomic_regions$sample,
+  genomic_regions <- BackendData_GenomicFeatures
+  genomic_regions$seqnames <- gsub('chr','',genomic_regions$seqnames)
+  genomic_regions <- genomic_regions[which(genomic_regions$seqnames %in% c(1:22, 'X')),]
+  genomic_regions <- GRanges(sample = genomic_regions$sample,
                             seqnames = genomic_regions$seqnames,
                             ranges = IRanges(genomic_regions$start, genomic_regions$end),
                             state = genomic_regions$state)
 
-  SNPs_Imputed = SNPs
+  SNPs_Imputed <- SNPs
   SNPs_Imputed_subject <- GRanges(Rle(as.character(SNPs_Imputed$CHROM)), IRanges(SNPs_Imputed$POS, width=2), rsID = SNPs_Imputed$ID)
-  SNPs_Imputed = as.data.frame(SNPs_Imputed)
+  SNPs_Imputed <- as.data.frame(SNPs_Imputed)
 
-  eQTL = eQTL[eQTL$FDR < FDRthreshold,]
-  eQTL = eQTL[!is.na(eQTL$seqnames),]
-  eQTL = as.data.frame(eQTL)
+  eQTL <- eQTL[eQTL$FDR < FDRthreshold,]
+  eQTL <- eQTL[!is.na(eQTL$seqnames),]
+  eQTL <- as.data.frame(eQTL)
 
   #--- select eQTLs
-  eQTL_sub = eQTL[which(eQTL$gene_id == TranscriptName),]
+  eQTL_sub <- eQTL[which(eQTL$gene_id == TranscriptName),]
   dim(eQTL_sub)
 
   #--- Foreground_rsIDs
@@ -83,38 +83,38 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
   #--- Background_rsIDs - select SNPs any a 1Mb windows
   posQuerySNP <- GRanges(paste0(eQTL_sub$seqnames[1],':',eQTL_sub$start[1],'-',eQTL_sub$start[1])) + windowSize
   fo <- findOverlaps(query=posQuerySNP, subject=SNPs_Imputed_subject, type="any")
-  Background_rsIDs = SNPs_Imputed_subject[subjectHits(fo),]
+  Background_rsIDs <- SNPs_Imputed_subject[subjectHits(fo),]
 
   #--- remove foreground from background
-  Background_rsIDs = Background_rsIDs[-which(Background_rsIDs$rsID %in% Foreground_rsIDs$rsID),]
+  Background_rsIDs <- Background_rsIDs[-which(Background_rsIDs$rsID %in% Foreground_rsIDs$rsID),]
   length(Background_rsIDs)
 
   #------------------- chromatin state
 
   #--- enrich foreground
   fo <- findOverlaps(query=Foreground_rsIDs, subject=chromatin_states, type="any")
-  foreground_CS = chromatin_states[subjectHits(fo),]
+  foreground_CS <- chromatin_states[subjectHits(fo),]
 
   #--- enrich background
   fo <- findOverlaps(query=Background_rsIDs, subject=chromatin_states, type="any")
-  Background_CS = chromatin_states[subjectHits(fo),]
+  Background_CS <- chromatin_states[subjectHits(fo),]
 
-  CSs = unique(foreground_CS$sample)
+  CSs <- unique(foreground_CS$sample)
 
   for(t in 1:length(CSs))
   {
-    cntA=length(which(foreground_CS$sample==CSs[t]))
-    totA=length(Foreground_rsIDs)
-    cntB=length(which(Background_CS$sample==CSs[t]))
-    totB=length(Background_rsIDs)
+    cntA<-length(which(foreground_CS$sample==CSs[t]))
+    totA<-length(Foreground_rsIDs)
+    cntB<-length(which(Background_CS$sample==CSs[t]))
+    totB<-length(Background_rsIDs)
 
-    table = c(cntA, totA, cntB, totB)
+    table <- c(cntA, totA, cntB, totB)
     dim(table)<-c(2,2)
     fishert <- fisher.test(table)
 
-    z_score = zScore(cntA, totA, cntB, totB)
+    z_score <- zScore(cntA, totA, cntB, totB)
 
-    temp = data.frame(gene = TranscriptName, CS = CSs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
+    temp <- data.frame(gene = TranscriptName, CS = CSs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
 
     if(t==1){RESULTsChromatinState = temp}else{RESULTsChromatinState = rbind(RESULTsChromatinState, temp)}
 
@@ -132,21 +132,21 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 
   if(length(foreground_GR)>0)
   {
-    GRs = unique(foreground_GR$sample)
+    GRs <- unique(foreground_GR$sample)
     for(t in 1:length(GRs))
     {
-      cntA=length(which(foreground_GR$sample==GRs[t]))
-      totA=length(foreground_GR)
-      cntB=length(which(Background_GR$sample==GRs[t]))
-      totB=length(Background_GR)
+      cntA<-length(which(foreground_GR$sample==GRs[t]))
+      totA<-length(foreground_GR)
+      cntB<-length(which(Background_GR$sample==GRs[t]))
+      totB<-length(Background_GR)
 
-      table = c(cntA, totA, cntB, totB)
+      table <- c(cntA, totA, cntB, totB)
       dim(table)<-c(2,2)
       fishert <- fisher.test(table)
 
-      z_score = zScore(cntA, totA, cntB, totB)
+      z_score <- zScore(cntA, totA, cntB, totB)
 
-      temp = data.frame(gene = TranscriptName, GR = GRs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
+      temp <- data.frame(gene = TranscriptName, GR = GRs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
 
       if(t==1){RESULTsGenomicFeatures = temp}else{RESULTsGenomicFeatures = rbind(RESULTsGenomicFeatures, temp)}
 
@@ -156,14 +156,14 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
   #------------------- save outputs
 
   Destiny_Folder <- system.file(package = "FEVV")
-  Destiny_Folder = paste(Destiny_Folder, "/RESULTsGenomicFeatures.txt", sep = "")
+  Destiny_Folder <- paste(Destiny_Folder, "/RESULTsGenomicFeatures.txt", sep = "")
 
   write.table(
     RESULTsGenomicFeatures, Destiny_Folder, sep = "\t", row.names = FALSE, quote = FALSE
   )
 
   Destiny_Folder <- system.file(package = "FEVV")
-  Destiny_Folder = paste(Destiny_Folder, "/RESULTsChromatinState.txt", sep = "")
+  Destiny_Folder <- paste(Destiny_Folder, "/RESULTsChromatinState.txt", sep = "")
 
   write.table(
     RESULTsChromatinState, Destiny_Folder, sep = "\t", row.names = FALSE, quote = FALSE
@@ -1048,15 +1048,15 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   #--------------------------- read inputs
 
   #------- chromatin_states
-  chromatin_states = GRanges(sample = BackendData_ChromatinStates[[4]],
+  chromatin_states <- GRanges(sample = BackendData_ChromatinStates[[4]],
                              seqnames = gsub('chr','',BackendData_ChromatinStates[[1]]),
                              ranges = IRanges(BackendData_ChromatinStates[[2]], BackendData_ChromatinStates[[3]]),
                              state = BackendData_ChromatinStates[[4]])
 
   #------- BackendData_GenomicFeatures
-  BackendData_GenomicFeatures$seqnames = gsub('chr','',BackendData_GenomicFeatures$seqnames)
-  BackendData_GenomicFeatures = BackendData_GenomicFeatures[which(BackendData_GenomicFeatures$seqnames %in% c(1:22, 'X')),]
-  BackendData_GenomicFeatures = GRanges(sample = BackendData_GenomicFeatures$sample,
+  BackendData_GenomicFeatures$seqnames <- gsub('chr','',BackendData_GenomicFeatures$seqnames)
+  BackendData_GenomicFeatures <- BackendData_GenomicFeatures[which(BackendData_GenomicFeatures$seqnames %in% c(1:22, 'X')),]
+  BackendData_GenomicFeatures <- GRanges(sample = BackendData_GenomicFeatures$sample,
                                         seqnames = BackendData_GenomicFeatures$seqnames,
                                         ranges = IRanges(BackendData_GenomicFeatures$start, BackendData_GenomicFeatures$end),
                                         state = BackendData_GenomicFeatures$state)
@@ -1065,8 +1065,8 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   #- query
   indexSNP <- SNP
 
-  SNP_chr_POS = snps.from.rsid(rsid = SNP, dbSNP = SNPlocs.Hsapiens.dbSNP144.GRCh38, search.genome = BSgenome.Hsapiens.UCSC.hg38)
-  SNP_chr_POS = data.frame(SNP_chr_POS, stringsAsFactors = FALSE)
+  SNP_chr_POS <- snps.from.rsid(rsid = SNP, dbSNP = SNPlocs.Hsapiens.dbSNP144.GRCh38, search.genome = BSgenome.Hsapiens.UCSC.hg38)
+  SNP_chr_POS <- data.frame(SNP_chr_POS, stringsAsFactors = FALSE)
 
   posQuerySNP <- GRanges(paste0(gsub('chr','',as.character(SNP_chr_POS$seqnames)),':',as.character(SNP_chr_POS$start),'-',as.character(SNP_chr_POS$end))) + windowSize
   #Using the 1MB window that we defined for the index variant, we capture the relevant variants from the VCF file for our LD calculations.
@@ -1076,11 +1076,11 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
      
     #---- vcf is the address of the vcf file
     chr.remote.vcf <- vcfPATH
-    vcfsubset = NULL
+    vcfsubset <- NULL
     vcfsubset <- GetVariantsInWindow(file = chr.remote.vcf,position = posQuerySNP[1], type = "vcf")
-    my.samples = fread(vcfMetaData, stringsAsFactors = FALSE)
+    my.samples <- fread(vcfMetaData, stringsAsFactors = FALSE)
     vcfsubset <- SetPopulation(vcf = vcfsubset, sample_sheet = my.samples)
-    row.names(vcfsubset) = make.names(row.names(vcfsubset), unique = TRUE)
+    row.names(vcfsubset) <- make.names(row.names(vcfsubset), unique = TRUE)
      
   }
 
@@ -1090,7 +1090,7 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   vcfsubsetsnps <- SplitVcfLd(vcf = LD, ld = c(metric = "R.squared", cutoff = 1, maf = mafThreshold), strict.subset = TRUE) #a strict subset cannot be the same set, that is, it cannot contain all of the elements that the other set does. Or in other words, a strict subset must be smaller, while a subset can be the same size.
   length( as.character(names(vcfsubsetsnps$fg)) )
   length( as.character(names(vcfsubsetsnps$bg)) )
-  F1 = as.character(names(vcfsubsetsnps$fg))
+  F1 <- as.character(names(vcfsubsetsnps$fg))
 
   fg_variants <- snps.from.rsid(rsid = F1, dbSNP = SNPlocs.Hsapiens.dbSNP144.GRCh38, search.genome = BSgenome.Hsapiens.UCSC.hg38)
 
@@ -1106,49 +1106,49 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
 
   length(names(vcfsubsetsnps$bg))
 
-  foreground_sub = as.data.frame(fg_variants)
-  foreground_sub$seqnames = gsub('chr', '', foreground_sub$seqnames)
+  foreground_sub <- as.data.frame(fg_variants)
+  foreground_sub$seqnames <- gsub('chr', '', foreground_sub$seqnames)
 
   fGRhg38 <- GRanges(
-    seqnames=Rle(as.character(foreground_sub$seqnames)),
-    ranges = IRanges(start=as.numeric(foreground_sub$start), end=as.numeric(foreground_sub$end)+1, names=foreground_sub$SNP_ID),
-    strand = Rle(as.character(foreground_sub$strand))
+    seqnames <- Rle(as.character(foreground_sub$seqnames)),
+    ranges <- IRanges(start=as.numeric(foreground_sub$start), end=as.numeric(foreground_sub$end)+1, names=foreground_sub$SNP_ID),
+    strand <- Rle(as.character(foreground_sub$strand))
   )
 
-  background_sub = as.data.frame(bg_variants)
-  background_sub$seqnames = gsub('chr', '', background_sub$seqnames)
+  background_sub <- as.data.frame(bg_variants)
+  background_sub$seqnames <- gsub('chr', '', background_sub$seqnames)
 
   bGRhg38 <- GRanges(
-    seqnames=Rle(as.character(background_sub$seqnames)),
-    ranges = IRanges(start=as.numeric(background_sub$start), end=as.numeric(background_sub$end)+1, names=background_sub$SNP_ID),
-    strand = Rle(as.character(background_sub$strand))
+    seqnames<-Rle(as.character(background_sub$seqnames)),
+    ranges <- IRanges(start=as.numeric(background_sub$start), end=as.numeric(background_sub$end)+1, names=background_sub$SNP_ID),
+    strand <- Rle(as.character(background_sub$strand))
   )
 
   #--------------------------------- CS enrichment
 
   #--- enrich foreground
   fo <- findOverlaps(query=fGRhg38, subject=chromatin_states, type="any")
-  foreground_CS = chromatin_states[subjectHits(fo),]
+  foreground_CS <- chromatin_states[subjectHits(fo),]
 
   #--- enrich background
   fo <- findOverlaps(query=bGRhg38, subject=chromatin_states, type="any")
-  Background_CS = chromatin_states[subjectHits(fo),]
-  CSs = unique(foreground_CS$sample)
+  Background_CS <- chromatin_states[subjectHits(fo),]
+  CSs <- unique(foreground_CS$sample)
 
   for(t in 1:length(CSs))
   {
-    cntA=length(which(foreground_CS$sample==CSs[t]))
-    totA=length(fGRhg38)
-    cntB=length(which(Background_CS$sample==CSs[t]))
-    totB=length(bGRhg38)
+    cntA<-length(which(foreground_CS$sample==CSs[t]))
+    totA<-length(fGRhg38)
+    cntB<-length(which(Background_CS$sample==CSs[t]))
+    totB<-length(bGRhg38)
 
-    table = c(cntA, totA, cntB, totB)
+    table <- c(cntA, totA, cntB, totB)
     dim(table)<-c(2,2)
     fishert <- fisher.test(table)
 
-    z_score = zScore(cntA, totA, cntB, totB)
+    z_score <- zScore(cntA, totA, cntB, totB)
 
-    temp = data.frame(SNP = indexSNP, CS = CSs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
+    temp <- data.frame(SNP = indexSNP, CS = CSs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
 
     if(t==1){RESULTsChromatinState = temp}else{RESULTsChromatinState = rbind(RESULTsChromatinState, temp)}
 
@@ -1159,29 +1159,29 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
 
   #--- enrich foreground
   fo <- findOverlaps(query=fGRhg38, subject=BackendData_GenomicFeatures, type="any")
-  foreground_GR = BackendData_GenomicFeatures[subjectHits(fo),]
+  foreground_GR <- BackendData_GenomicFeatures[subjectHits(fo),]
 
   #--- enrich background
   fo <- findOverlaps(query=bGRhg38, subject=BackendData_GenomicFeatures, type="any")
-  Background_GR = BackendData_GenomicFeatures[subjectHits(fo),]
+  Background_GR <- BackendData_GenomicFeatures[subjectHits(fo),]
 
   if(length(foreground_GR)>0)
   {
-    GRs = unique(foreground_GR$sample)
+    GRs <- unique(foreground_GR$sample)
     for(t in 1:length(GRs))
     {
-      cntA=length(which(foreground_GR$sample==GRs[t]))
-      totA=length(foreground_GR)
-      cntB=length(which(Background_GR$sample==GRs[t]))
-      totB=length(Background_GR)
+      cntA<-length(which(foreground_GR$sample==GRs[t]))
+      totA<-length(foreground_GR)
+      cntB<-length(which(Background_GR$sample==GRs[t]))
+      totB<-length(Background_GR)
 
-      table = c(cntA, totA, cntB, totB)
+      table <- c(cntA, totA, cntB, totB)
       dim(table)<-c(2,2)
       fishert <- fisher.test(table)
 
-      z_score = zScore(cntA, totA, cntB, totB)
+      z_score <- zScore(cntA, totA, cntB, totB)
 
-      temp = data.frame(SNP = indexSNP, GR = GRs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
+      temp <- data.frame(SNP = indexSNP, GR = GRs[t], p = fishert$p.value, oddsratio = fishert$estimate, CIl= fishert$conf.int[1], CIh = fishert$conf.int[2], zScore = z_score, FE = cntA, FA = totA, BE = cntB, BA = totB)
 
       if(t==1){RESULTsGenomicFeatures = temp}else{RESULTsGenomicFeatures = rbind(RESULTsGenomicFeatures, temp)}
 
@@ -1192,14 +1192,14 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
   #------------------- save outputs
 
   Destiny_Folder <- system.file(package = "FEVV")
-  Destiny_Folder = paste(Destiny_Folder, "/RESULTsGenomicFeatures.txt", sep = "")
+  Destiny_Folder <- paste(Destiny_Folder, "/RESULTsGenomicFeatures.txt", sep = "")
 
   write.table(
     RESULTsGenomicFeatures, Destiny_Folder, sep = "\t", row.names = FALSE, quote = FALSE
   )
 
   Destiny_Folder <- system.file(package = "FEVV")
-  Destiny_Folder = paste(Destiny_Folder, "/RESULTsChromatinState.txt", sep = "")
+  Destiny_Folder <- paste(Destiny_Folder, "/RESULTsChromatinState.txt", sep = "")
 
   write.table(
     RESULTsChromatinState, Destiny_Folder, sep = "\t", row.names = FALSE, quote = FALSE
