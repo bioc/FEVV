@@ -10,9 +10,8 @@ querySNPsEnrichmentAnalysis(
   windowSize,
   BackendData_GenomicFeatures,
   BackendData_ChromatinStates,
-  vcfsubset,
   vcfMetaData,
-  vcfPATH = NULL
+  vcfPATH
 )
 }
 \arguments{
@@ -26,21 +25,21 @@ querySNPsEnrichmentAnalysis(
 
 \item{BackendData_ChromatinStates}{10 genomic features from the biomaRt (Ensembl) and UCSC}
 
-\item{vcfsubset}{vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).}
-
 \item{vcfMetaData}{meta data of 1000 Genomes project (phase3) including 'sample',    'pop',    'super_pop', and 'gender' header}
+
+\item{vcfPATH}{Pathe to the vcf file.}
 }
 \value{
 You can find the results in R object under title of 'RESULTsGenomicFeatures' and 'RESULTsChromatinState'.
 }
 \description{
-a query SNP as the input: a query SNP as input: first, the 1MB window is defined for the query SNP, and the relevant variants captured from the 1000 genomes data in the European population background. Next, we split the SNPs based upon a LD (R² = 0.8 and MAF = 0.01) to foreground (query SNP and its LD proxies) and background SNPs sets. We used the number of overlaps of foreground (f) and background (b) SNP sets in the genomic feature or chromatin state and calculate the enrichment score (z-score and odds ratio).
+a query SNP as the input: a query SNP as input: first, the 1MB window is defined for the query SNP, and the relevant variants captured from the 1000 genomes data in the European population background. Next, we split the SNPs based upon a LD (R?? = 0.8 and MAF = 0.01) to foreground (query SNP and its LD proxies) and background SNPs sets. We used the number of overlaps of foreground (f) and background (b) SNP sets in the genomic feature or chromatin state and calculate the enrichment score (z-score and odds ratio).
 }
 \examples{
 data(BackendData_GenomicFeatures)
 data(BackendData_ChromatinStates)
 Destiny_Folder <- system.file(package = "FEVV")
-querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcf = vcfsubset, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = NULL )
+querySNPsEnrichmentAnalysis(SNP = 'rs13149699', mafThreshold = 0.039, windowSize = 1000000, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfMetaData = system.file("extdata", "Genotyping1000_samples_metatadata.txt", package="FEVV"), vcfPATH = 'http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz' )
 }
 \author{
 {Isar Nassiri, Benjamin Fairfax}
