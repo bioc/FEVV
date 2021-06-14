@@ -205,8 +205,8 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'minor allele frequency (MAF) threshold
 #'@param vcfMetaData
 #'meta data of 1000 Genomes project (phase3) including 'sample',	'pop',	'super_pop', and 'gender' header
-#'@param vcfsubset
-#'vcf file of selected chromosome from 1000 Genomes project (http://hgdownload.cse.ucsc.edu/gbdb/hg38/1000Genomes/) in VariantAnnotation format. Alternatively, you can provide pathe to the vcf file (vcfPATH - default vcfPATH = NULL).
+#'@param vcfPATH
+#'Pathe to the vcf file.
 #'@return You can find the results in R object under title of 'RESULTsGenomicFeatures' and 'RESULTsChromatinState'.
 #'@examples
 #'data(BackendData_GenomicFeatures)
@@ -216,7 +216,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'@export
 
 querySNPsEnrichmentAnalysis <- NULL
-querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfsubset, vcfMetaData, vcfPATH = NULL)
+querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendData_GenomicFeatures, BackendData_ChromatinStates, vcfMetaData, vcfPATH)
 {
 
   #########################
