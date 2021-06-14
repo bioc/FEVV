@@ -191,7 +191,7 @@ eSNPsEnrichmentAnalysis <- function(eQTL, TranscriptName, windowSize, FDRthresho
 #'@import VariantAnnotation
 #'@name querySNPsEnrichmentAnalysis
 #'@title Single query SNP enrichment
-#'@description a query SNP as the input: a query SNP as input: first, the 1MB window is defined for the query SNP, and the relevant variants captured from the 1000 genomes data in the European population background. Next, we split the SNPs based upon a LD (R² = 0.8 and MAF = 0.01) to foreground (query SNP and its LD proxies) and background SNPs sets. We used the number of overlaps of foreground (f) and background (b) SNP sets in the genomic feature or chromatin state and calculate the enrichment score (z-score and odds ratio).
+#'@description a query SNP as the input: a query SNP as input: first, the 1MB window is defined for the query SNP, and the relevant variants captured from the 1000 genomes data in the European population background. Next, we split the SNPs based upon a LD (R?? = 0.8 and MAF = 0.01) to foreground (query SNP and its LD proxies) and background SNPs sets. We used the number of overlaps of foreground (f) and background (b) SNP sets in the genomic feature or chromatin state and calculate the enrichment score (z-score and odds ratio).
 #'@author {Isar Nassiri, Benjamin Fairfax}
 #'@param windowSize
 #'window around the TSS (e.g. 1000000)
@@ -1079,12 +1079,12 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
     vcfsubset <- NULL
     vcfsubset <- GetVariantsInWindow(file = chr.remote.vcf,position = posQuerySNP[1], type = "vcf")
     my.samples <- fread(vcfMetaData, stringsAsFactors = FALSE)
-    vcfsubset <- SetPopulation(vcf = vcfsubset, sample_sheet = my.samples)
+    vcfsubset <- SetPopulation(vcfsubset, sample_sheet = my.samples)
     row.names(vcfsubset) <- make.names(row.names(vcfsubset), unique = TRUE)
      
   }
 
-  LD <- CalcLD(vcf = vcfsubset, index = indexSNP, population = "EUR")
+  LD <- CalcLD(vcfsubset, index = indexSNP, population = "EUR")
 
   #----------------- foreground
   vcfsubsetsnps <- SplitVcfLd(vcf = LD, ld = c(metric = "R.squared", cutoff = 1, maf = mafThreshold), strict.subset = TRUE) #a strict subset cannot be the same set, that is, it cannot contain all of the elements that the other set does. Or in other words, a strict subset must be smaller, while a subset can be the same size.
@@ -1094,7 +1094,7 @@ querySNPsEnrichmentAnalysis <- function(SNP, mafThreshold, windowSize, BackendDa
 
   fg_variants <- snps.from.rsid(rsid = F1, dbSNP = SNPlocs.Hsapiens.dbSNP144.GRCh38, search.genome = BSgenome.Hsapiens.UCSC.hg38)
 
-  LD <- CalcLD(vcf = vcfsubset, index = indexSNP, population = "EUR")
+  LD <- CalcLD(vcfsubset, index = indexSNP, population = "EUR")
 
   vcfsubsetsnps <- SplitVcfLd(vcf = LD, ld = c(metric = "R.squared", cutoff = 0.001, maf = mafThreshold), strict.subset = TRUE) #a strict subset cannot be the same set, that is, it cannot contain all of the elements that the other set does. Or in other words, a strict subset must be smaller, while a subset can be the same size.
   length( as.character(names(vcfsubsetsnps$fg)) )
